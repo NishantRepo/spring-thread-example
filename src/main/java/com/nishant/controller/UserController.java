@@ -47,7 +47,8 @@ public class UserController {
     public void saveUsers(@RequestParam(value = "files") MultipartFile[] files) throws Exception {
 
         for (MultipartFile file : files) {
-            userService.saveUser(file);
+            CompletableFuture<List<User>> listCompletableFuture = userService.saveUser(file);
+            List<User> users = listCompletableFuture.get();
         }
     }
 
@@ -88,11 +89,11 @@ public class UserController {
     @PostMapping("/jwt")
     public String authAndGetJwt(@RequestBody AuthRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        if(authentication.isAuthenticated()) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        if (authentication.isAuthenticated()) {
             return jwtService.generateJwt(request.getUsername());
-        }
-        else {
+        } else {
             throw new UsernameNotFoundException("invalid user request!!!");
         }
     }
@@ -104,7 +105,7 @@ public class UserController {
     }
 
     @GetMapping("/short")
-    public String  add() {
+    public String add() {
         userService.add();
         return "hello";
 

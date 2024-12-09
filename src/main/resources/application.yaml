@@ -1,4 +1,9 @@
+server:
+  port: 9070
+
 spring:
+  application:
+    name: spring-thread-example
   h2:
     console:
       enabled: true
@@ -7,12 +12,17 @@ spring:
     properties:
       hibernate:
         format_sql: false
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        register: true
+        healthCheckPath: /actuator/health
 #  security:
 #    user:
 #      name: admin
 #      password: pwd
-server:
-  port: 9090
 
 logging.level.org.zalando.logbook: TRACE
 logbook:
@@ -20,3 +30,18 @@ logbook:
     - "**/users"
     - "**/findAll"
     - "**/findUsers"
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+    instances:
+      externalService:
+        baseConfig: default
+        waitDurationInOpenState: 20s
+        failureRateThreshold: 50

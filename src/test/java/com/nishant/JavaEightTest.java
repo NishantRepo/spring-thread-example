@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Slf4j
 public class JavaEightTest {
@@ -176,7 +177,7 @@ public class JavaEightTest {
     public void removeDuplicate() {
         List<Integer> list = Arrays.asList(12, 45, 66, 75, 89, 453, 15, 66, 89, 12, 15);
         list.stream().distinct().forEach(System.out::println);
-        List<Integer> sorted = list.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+        List<Integer> sorted = list.stream().sorted((c1, c2) -> c1 -c2).collect(Collectors.toList());
     }
 
     @Test
@@ -258,6 +259,7 @@ public class JavaEightTest {
     public void charCount() {
 
         String str = "communication";
+        Map<char[], Long> map1 = Stream.of(str.toCharArray()).collect(Collectors.groupingBy(data -> data, Collectors.counting()));
         Map<String, Long> map = Arrays.stream(str.split(""))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         System.out.println(map);
@@ -418,6 +420,7 @@ public class JavaEightTest {
         System.out.println(ascSorted);
 
         List<Integer> descSorted = list.stream().sorted((a, b) -> b - a).collect(Collectors.toList());
+        list.stream().sorted((Comparator.naturalOrder())).collect(Collectors.toList());
         System.out.println("desc sort order");
         System.out.println(descSorted);
 
@@ -479,6 +482,10 @@ public class JavaEightTest {
         System.out.println("desc sorted product list by id:");
         List<Product> descsortbyId = productList.stream().sorted((a, b) -> b.getProductId() - a.getProductId()).collect(Collectors.toList());
         descsortbyId.forEach(System.out::println);
+
+        Product product = productList.stream().max((e1, e2) -> e1.getProductId() - e2.getProductId()).get();
+        System.out.println("products details with highest id:"+ product.toString());
+
     }
 
     @Test
@@ -486,6 +493,7 @@ public class JavaEightTest {
 
         List<Integer> list = Arrays.asList(43, 5, 7, 8, 3, 5, 66, 11);
 
+        //list.stream().count();
         // int max = list.stream().max(Integer::compareTo).get();
         int max = list.stream().max((o1, o2) -> o1 - o2).get();
         System.out.println("max value is:" + max);
@@ -551,10 +559,40 @@ public class JavaEightTest {
         int target = 2;
         List<Integer> list = Arrays.asList(1,2,3, 2);
 
-       list.stream().flatMap(num1 ->
+        Integer i = list.stream().sorted((c1, c2) -> c2 - c1).skip(1).findFirst().get();
+        System.out.println(i);
+
+
+        list.stream().flatMap(num1 ->
                 list.stream().filter(num2 -> (num1 + num2) == target && num1 < num2)
                         .map(num2 -> num1 + "," + num2)).distinct().forEach(data -> System.out.println("pair: " + data));
 
        // System.out.println("pair is:" + pair);
+    }
+
+    @Test
+    public void dddeded() {
+        int count = 0;
+        char c = 'n';
+        String str = "nishnat shejule";
+        for(int i=0; i<=str.length() -1 ;i++) {
+            char ch = str.charAt(i);
+            if(ch ==c) {
+                count++;
+            }
+        }
+        System.out.println(count);
+    }
+
+
+    @Test
+    public void testete() {
+        String str = "apple";
+        Optional<Character> first = str.chars().mapToObj(ch -> (char) ch).collect(Collectors.groupingBy(data -> data, Collectors.counting())).entrySet().stream()
+                .filter(data -> data.getValue() == 1).map(data -> data.getKey()).toList().stream().findFirst();
+
+        System.out.println(first.get());
+
+
     }
 }

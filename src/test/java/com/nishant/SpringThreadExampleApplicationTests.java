@@ -3,10 +3,13 @@ package com.nishant;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -16,6 +19,9 @@ class SpringThreadExampleApplicationTests {
 
 	@Test
 	void contextLoads() throws ExecutionException, InterruptedException {
+
+		Future<Integer> submit = Executors.newSingleThreadExecutor().submit(() -> 10 + 20);
+		submit.get();
 
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(100);
